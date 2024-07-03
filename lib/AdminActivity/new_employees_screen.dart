@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'add_employee_screen.dart';
@@ -14,6 +16,7 @@ class NewEmployeesScreen extends StatefulWidget {
 
 class _EmployeesScreenState extends State<NewEmployeesScreen> {
   late Future<List<Map<String, dynamic>>> _employeesFuture;
+  File? selectedImage;
 
   @override
   void initState() {
@@ -26,8 +29,9 @@ class _EmployeesScreenState extends State<NewEmployeesScreen> {
       DatabaseHelper dbHelper = DatabaseHelper.instance;
       // Fetch only required columns
       List<Map<String, dynamic>> users = await dbHelper.queryAllUsers2();
+      selectedImage=null;
       return users;
-    }  catch (e) {
+    } catch (e) {
       print('Error fetching employees: $e');
       return []; // Handle error gracefully
     }
@@ -59,9 +63,12 @@ class _EmployeesScreenState extends State<NewEmployeesScreen> {
                   String avatarText =
                       employeeName.substring(0, 1).toUpperCase();
 
+                  if (employee['imgPath'] != null) {
+                    selectedImage = File(employee?['imgPath']);
+                  }
+
                   return Slidable(
                     endActionPane: ActionPane(
-
                       motion: ScrollMotion(),
                       extentRatio: 0.25,
                       children: [
@@ -73,7 +80,6 @@ class _EmployeesScreenState extends State<NewEmployeesScreen> {
                           icon: Icons.edit,
                           label: 'Edit',
                           borderRadius: BorderRadius.circular(64),
-
                         ),
                       ],
                     ),
@@ -92,11 +98,16 @@ class _EmployeesScreenState extends State<NewEmployeesScreen> {
                       ],
                     ),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.deepPurple,
-                        foregroundColor: Colors.white,
-                        child: Text(avatarText),
-                      ),
+                      leading: selectedImage != null
+                          ? CircleAvatar(
+                              backgroundImage: FileImage(selectedImage!),
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Colors.deepPurple,
+                              foregroundColor: Colors.white,
+                              child: Text(avatarText),
+                            ),
+
                       title: Text(employeeName),
                       onTap: () {
                         _viewUser(context, employee);

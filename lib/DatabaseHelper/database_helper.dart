@@ -168,12 +168,15 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllUsers2() async {
     Database db = await instance.database;
     return await db.rawQuery(
-        'SELECT $columnId,$columnName,$columnEmail,$columnPassword,$columnRole FROM $tableUsers');
+        'SELECT $columnId,$columnName,$columnEmail,$columnPassword,$columnRole,$columnImgPath FROM $tableUsers');
   }
+
   Future<Map<String, dynamic>?> getUserProfilePath(String email) async {
     Database db = await instance.database;
-    List<Map<String, dynamic>> results = await db
-        .query(tableUsers,columns: [columnImgPath], where: '$columnEmail = ?', whereArgs: [email]);
+    List<Map<String, dynamic>> results = await db.query(tableUsers,
+        columns: [columnImgPath],
+        where: '$columnEmail = ?',
+        whereArgs: [email]);
     return results.isNotEmpty ? results.first : null;
   }
 

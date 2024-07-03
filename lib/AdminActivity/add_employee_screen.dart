@@ -148,7 +148,6 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         path = '${directory.path}/${formatted}${_nameController.text}.jpg';
         File imageFile = File(pickedImage.path);
         File newImage = await imageFile.copy(path);
-
         setState(() {
           selectedImage = newImage;
         });
